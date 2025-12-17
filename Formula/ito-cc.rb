@@ -1,9 +1,9 @@
 class ItoCc < Formula
   desc "ITO Claude Code with Amazon Bedrock"
   homepage "https://github.com/it-objects/ito-claude-code-platform"
-  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-153803.zip"
+  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-160041.zip"
   sha256 "d5a25c7ca8dab9a21c98fb49a7b62c76a4a77dc556c544544c454ad948272119"
-  version "2025.12.17.153803"
+  version "2025.12.17.160041"
 
   depends_on "awscli"
   depends_on "python@3.12"
@@ -100,7 +100,8 @@ EOF
 
   def post_install
     # Automatically run setup script after installation
-    system bin/"ccwb-setup"
+    # Use opt_bin for version-agnostic path (points to /opt/homebrew/opt/ito-cc/bin)
+    system opt_bin/"ccwb-setup"
   end
 
   def caveats
