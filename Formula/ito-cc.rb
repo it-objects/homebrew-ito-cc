@@ -1,9 +1,9 @@
 class ItoCc < Formula
   desc "ITO Claude Code with Amazon Bedrock"
   homepage "https://github.com/it-objects/ito-claude-code-platform"
-  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-175405.zip"
+  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-175635.zip"
   sha256 "d5a25c7ca8dab9a21c98fb49a7b62c76a4a77dc556c544544c454ad948272119"
-  version "2025.12.17.175405"
+  version "2025.12.17.175635"
 
   depends_on "awscli"
   depends_on "python@3.12"
@@ -109,16 +109,19 @@ EOF
     # Ensure execute permissions are set (Homebrew may reset them during install)
     require "fileutils"
     FileUtils.chmod(0o755, opt_bin/"ccwb-setup")
-    # Automatically run setup script after installation
-    # Use opt_bin for version-agnostic path (points to /opt/homebrew/opt/ito-cc/bin)
-    system opt_bin/"ccwb-setup"
+    # Note: We don't automatically run ccwb-setup here because it modifies user files
+    # (~/.aws/config and ~/.claude/settings.json), which violates Homebrew best practices.
+    # Users should run it manually after installation.
   end
 
   def caveats
     <<~EOS
-      Configuration has been automatically applied to your ~/.aws/config profiles and Claude settings.
+      To complete the installation, please run:
+        ccwb-setup
+
+      This will configure your ~/.aws/config profiles and Claude settings.
       
-      If you need to reconfigure, run:
+      If you need to reconfigure later, run:
         ccwb-setup
     EOS
   end
