@@ -1,9 +1,9 @@
 class ItoCc < Formula
   desc "ITO Claude Code with Amazon Bedrock"
   homepage "https://github.com/it-objects/ito-claude-code-platform"
-  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-175118.zip"
+  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-175405.zip"
   sha256 "d5a25c7ca8dab9a21c98fb49a7b62c76a4a77dc556c544544c454ad948272119"
-  version "2025.12.17.175118"
+  version "2025.12.17.175405"
 
   depends_on "awscli"
   depends_on "python@3.12"
@@ -97,14 +97,18 @@ EOF
       echo "✓ Configuration complete!"
     EOS
     
-    # Write to temporary file and set execute permissions before installing
-    temp_script = buildpath/"ccwb-setup"
-    temp_script.write(script_content)
-    temp_script.chmod(0755)
-    bin.install temp_script
+    # Write script directly to bin
+    setup_script = bin/"ccwb-setup"
+    setup_script.write(script_content)
+    # Set execute permissions - use FileUtils for reliability
+    require "fileutils"
+    FileUtils.chmod(0o755, setup_script.to_s)
   end
 
   def post_install
+    # Ensure execute permissions are set (Homebrew may reset them during install)
+    require "fileutils"
+    FileUtils.chmod(0o755, opt_bin/"ccwb-setup")
     # Automatically run setup script after installation
     # Use opt_bin for version-agnostic path (points to /opt/homebrew/opt/ito-cc/bin)
     system opt_bin/"ccwb-setup"
