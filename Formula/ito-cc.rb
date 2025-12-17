@@ -1,9 +1,9 @@
 class ItoCc < Formula
   desc "ITO Claude Code with Amazon Bedrock"
   homepage "https://github.com/it-objects/ito-claude-code-platform"
-  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-222555.zip"
+  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-224023.zip"
   sha256 "5be4466a800eb7d58c1554aa3088107155a7ab8cadfcabc37b68fdcf9e8f5b16"
-  version "2025.12.17.222555"
+  version "2025.12.17.224023"
 
   depends_on "awscli"
   depends_on "python@3.12"
@@ -41,9 +41,9 @@ class ItoCc < Formula
       echo "Configuring ITO Claude Code with Bedrock..."
       
       # Paths managed by Homebrew
-      # Use bin for version-agnostic binary paths (symlinked)
-      CREDENTIAL_PROCESS="#{bin}/credential-provider"
-      CONFIG_FILE="#{libexec}/config.json"
+      # Use opt_bin for version-agnostic binary paths (symlinked)
+      CREDENTIAL_PROCESS="#{opt_bin}/credential-provider"
+      CONFIG_FILE="#{opt_libexec}/config.json"
       
       if [ ! -f "$CONFIG_FILE" ]; then
           echo "Error: config.json not found at $CONFIG_FILE"
@@ -81,15 +81,15 @@ EOF
       done
       
       # Configure Claude settings
-      if [ -d "#{etc}/claude-code/claude-settings" ]; then
+      if [ -d "#{opt_etc}/claude-code/claude-settings" ]; then
           echo "Configuring Claude settings..."
           mkdir -p ~/.claude
           
-          SETTINGS_SRC="#{etc}/claude-code/claude-settings/settings.json"
+          SETTINGS_SRC="#{opt_etc}/claude-code/claude-settings/settings.json"
           if [ -f "$SETTINGS_SRC" ]; then
               # Replace placeholders with version-agnostic bin paths (symlinked)
-              sed -e "s|__OTEL_HELPER_PATH__|#{bin}/otel-helper|g" \\
-                  -e "s|__CREDENTIAL_PROCESS_PATH__|#{bin}/credential-provider|g" \\
+              sed -e "s|__OTEL_HELPER_PATH__|#{opt_bin}/otel-helper|g" \\
+                  -e "s|__CREDENTIAL_PROCESS_PATH__|#{opt_bin}/credential-provider|g" \\
                   "$SETTINGS_SRC" > ~/.claude/settings.json
               echo "Updated ~/.claude/settings.json"
           fi
@@ -109,7 +109,7 @@ EOF
   def post_install
     # Ensure execute permissions are set (Homebrew may reset them during install)
     require "fileutils"
-    FileUtils.chmod(0o755, opt_bin/"ccwb-setup")
+    FileUtils.chmod(0o755, bin/"ccwb-setup")
     # Note: We don't automatically run ccwb-setup here because it modifies user files
     # (~/.aws/config and ~/.claude/settings.json), which violates Homebrew best practices.
     # Users should run it manually after installation.
