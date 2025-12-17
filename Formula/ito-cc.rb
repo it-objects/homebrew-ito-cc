@@ -1,9 +1,9 @@
 class ItoCc < Formula
   desc "ITO Claude Code with Amazon Bedrock"
   homepage "https://github.com/it-objects/ito-claude-code-platform"
-  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-203423.zip"
-  sha256 "884a74637ab9efe6ab4acbd74dba541996d16910b58d354f5ca0cc8ccb3b6065"
-  version "2025.12.17.203423"
+  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251217-222555.zip"
+  sha256 "5be4466a800eb7d58c1554aa3088107155a7ab8cadfcabc37b68fdcf9e8f5b16"
+  version "2025.12.17.222555"
 
   depends_on "awscli"
   depends_on "python@3.12"
@@ -41,7 +41,8 @@ class ItoCc < Formula
       echo "Configuring ITO Claude Code with Bedrock..."
       
       # Paths managed by Homebrew
-      CREDENTIAL_PROCESS="#{libexec}/credential-provider"
+      # Use bin for version-agnostic binary paths (symlinked)
+      CREDENTIAL_PROCESS="#{bin}/credential-provider"
       CONFIG_FILE="#{libexec}/config.json"
       
       if [ ! -f "$CONFIG_FILE" ]; then
@@ -86,9 +87,9 @@ EOF
           
           SETTINGS_SRC="#{etc}/claude-code/claude-settings/settings.json"
           if [ -f "$SETTINGS_SRC" ]; then
-              # Replace placeholders
-              sed -e "s|__OTEL_HELPER_PATH__|#{libexec}/otel-helper|g" \\
-                  -e "s|__CREDENTIAL_PROCESS_PATH__|#{libexec}/credential-provider|g" \\
+              # Replace placeholders with version-agnostic bin paths (symlinked)
+              sed -e "s|__OTEL_HELPER_PATH__|#{bin}/otel-helper|g" \\
+                  -e "s|__CREDENTIAL_PROCESS_PATH__|#{bin}/credential-provider|g" \\
                   "$SETTINGS_SRC" > ~/.claude/settings.json
               echo "Updated ~/.claude/settings.json"
           fi
