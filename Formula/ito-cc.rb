@@ -1,9 +1,9 @@
 class ItoCc < Formula
   desc "ITO Claude Code with Amazon Bedrock"
   homepage "https://github.com/it-objects/ito-claude-code-platform"
-  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20251218-092046.zip"
-  sha256 "fc5eaea3ac6fb6e072ff1b6ed5e9a27afb55e0a631eebcffcd1d0680bba921f4"
-  version "2025.12.18.092046"
+  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20260116-092339.zip"
+  sha256 "ff9050534c65ebe3c65f5a3f07e5aa6dd2093ad675b3360fcb782cecfc4204ce"
+  version "2026.01.16.092339"
 
   depends_on "awscli"
   depends_on "python@3.12"
@@ -26,11 +26,6 @@ class ItoCc < Formula
     # Install Claude settings if present
     if Dir.exist?("claude-settings")
       (etc/"claude-code").install "claude-settings"
-      # Rename settings.json to settings.json.default to indicate it's a template
-      settings_file = etc/"claude-code"/"claude-settings"/"settings.json"
-      if settings_file.exist?
-        settings_file.rename(etc/"claude-code"/"claude-settings"/"settings.json.default")
-      end
     end
 
     # Symlink binaries to bin
