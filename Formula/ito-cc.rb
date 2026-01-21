@@ -1,9 +1,9 @@
 class ItoCc < Formula
   desc "ITO Claude Code with Amazon Bedrock"
   homepage "https://github.com/it-objects/ito-claude-code-platform"
-  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20260121-110108.zip"
+  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20260121-112516.zip"
   sha256 "5b263968a8832afeee0647c5fe3ea6eff156f715638bdb7b8de7baba95056ba0"
-  version "2026.01.21.110108"
+  version "2026.01.21.112516"
 
   depends_on "awscli"
   depends_on "jq"
@@ -85,7 +85,7 @@ EOF
           echo "Configuring Claude settings..."
           mkdir -p ~/.claude
           
-          SETTINGS_SRC="#{etc}/claude-code/claude-settings/settings.json.default"
+          SETTINGS_SRC="#{etc}/claude-code/claude-settings/settings.json"
           SETTINGS_DEST=~/.claude/settings.json
           
           if [ -f "$SETTINGS_SRC" ]; then
