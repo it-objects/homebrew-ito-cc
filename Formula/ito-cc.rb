@@ -1,12 +1,12 @@
 class ItoCc < Formula
   desc "ITO Claude Code with Amazon Bedrock"
   homepage "https://github.com/it-objects/ito-claude-code-platform"
-  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20260121-002818.zip"
-  sha256 "aef6dc12d7260271d9bf225c42c16626f1e4b3c048226635cf8d077cc2c26889"
-  version "2026.01.21.002818"
+  url "https://raw.githubusercontent.com/it-objects/homebrew-ito-cc/main/packages/claude-code-package-20260121-105052.zip"
+  sha256 "5b263968a8832afeee0647c5fe3ea6eff156f715638bdb7b8de7baba95056ba0"
+  version "2026.01.21.105052"
 
   depends_on "awscli"
-  depends_on "python@3.12"
+  depends_on "jq"
 
   def install
     # Install binaries to libexec to keep config.json next to them
@@ -51,7 +51,7 @@ class ItoCc < Formula
       fi
       
       # Read profiles from config.json
-      PROFILES=$(python3 -c "import json; profiles = list(json.load(open('$CONFIG_FILE')).keys()); print(' '.join(profiles))")
+      PROFILES=$(jq -r 'keys[]' "$CONFIG_FILE" | tr '\n' ' ')
       
       if [ -z "$PROFILES" ]; then
           echo "Error: No profiles found in config.json"
@@ -70,7 +70,7 @@ class ItoCc < Formula
           sed -i.bak "/\\\\[profile $PROFILE_NAME\\\\]/,/^$/d" ~/.aws/config 2>/dev/null || true
           
           # Get region
-          PROFILE_REGION=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('$PROFILE_NAME', {}).get('aws_region', 'us-east-1'))")
+          PROFILE_REGION=$(jq -r --arg profile "$PROFILE_NAME" '.[$profile].aws_region // "us-east-1"' "$CONFIG_FILE")
           
           # Add new profile
           cat >> ~/.aws/config << EOF
@@ -86,13 +86,24 @@ EOF
           mkdir -p ~/.claude
           
           SETTINGS_SRC="#{etc}/claude-code/claude-settings/settings.json.default"
+          SETTINGS_DEST=~/.claude/settings.json
+          
           if [ -f "$SETTINGS_SRC" ]; then
+              # Backup existing settings if present
+              if [ -f "$SETTINGS_DEST" ]; then
+                  BACKUP_FILE="$SETTINGS_DEST.backup.$(date +%Y%m%d_%H%M%S)"
+                  cp "$SETTINGS_DEST" "$BACKUP_FILE"
+                  echo "⚠️  Backed up existing settings to: $BACKUP_FILE"
+              fi
+              
               # Replace placeholders with version-agnostic bin paths (symlinked)
               sed -e "s|__OTEL_HELPER_PATH__|#{opt_bin}/otel-helper|g" \\
                   -e "s|__CREDENTIAL_PROCESS_PATH__|#{opt_bin}/credential-provider|g" \\
-                  "$SETTINGS_SRC" > ~/.claude/settings.json
-              echo "Updated ~/.claude/settings.json"
-          fi
+                  "$SETTINGS_SRC" > "$SETTINGS_DEST"
+              echo "✓ Created ~/.claude/settings.json"
+          else
+              echo "⚠️  settings.json.default not found, skipping Claude settings configuration"
+e          fi
       fi
       
       echo "✓ Configuration complete!"
